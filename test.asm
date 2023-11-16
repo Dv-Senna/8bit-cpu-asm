@@ -6,7 +6,7 @@ copy d, b
 
 # while d != 0
 loop:
-    jmpz d, end
+    jz d, end
 
     # c += a
     add c, a

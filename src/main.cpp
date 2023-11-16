@@ -1,3 +1,4 @@
+#include <bitset>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -6,6 +7,7 @@
 #include <vector>
 
 #include "error.hpp"
+#include "converter.hpp"
 #include "parser.hpp"
 #include "resolver.hpp"
 
@@ -36,35 +38,6 @@ int main(int argc, char *argv[])
 		if (Error::checkErrors())
 			throw std::runtime_error("Error occure during parsing");
 
-		/*for (const auto &instruction : parsedInstructions)
-		{
-			std::cout << "Line " << instruction.line << " > " << static_cast<int> (instruction.name) << " : ";
-			for (const auto &arg : instruction.args)
-			{
-				switch (arg.type)
-				{
-					case ArgsType::number:
-						std::cout << "(number) " << std::get<int> (arg.value) << ", ";
-						break;
-
-					case ArgsType::registerID:
-						std::cout << "(registerID) " << (int)std::get<RegisterID> (arg.value) << ", ";
-						break;
-
-					case ArgsType::tag:
-						std::cout << "(tag) " << std::get<std::string> (arg.value) << ", ";
-						break;
-
-					case ArgsType::tagAddress:
-						std::cout << "(tagAddress) " << std::get<int> (arg.value) << ", ";
-						break;
-				}
-			}
-
-			std::cout << "\n";
-		}
-
-		std::cout << std::flush;*/
 
 		auto resolvedInstructions {resolve(parsedInstructions)};
 
@@ -94,6 +67,17 @@ int main(int argc, char *argv[])
 			}
 
 			std::cout << "\n";
+		}
+
+		std::cout << std::flush;
+
+		std::cout << "----------------------------" << std::endl;
+
+		auto convertedBinary {convert(resolvedInstructions)};
+
+		for (const auto instruction : convertedBinary)
+		{
+			std::cout << std::bitset<8> (instruction) << "\n";
 		}
 
 		std::cout << std::flush;

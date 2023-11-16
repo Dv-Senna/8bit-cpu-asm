@@ -28,14 +28,13 @@ enum class InstructionName
 	CARRY,
 	WI,
 	COPY,
-	JMP,
-	JMPI,
-	JMPZ,
-	JMPC,
+	JHL,
+	JIHL,
+	JZHL,
+	JCHL,
 	MWRITE,
 	MREAD,
 	BYTE,
-	JMPR,
 
 	__fondamentInstructionCount,
 
@@ -56,6 +55,10 @@ enum class InstructionName
 	OR,
 	XOR,
 	NOT,
+	JMP,
+	JI,
+	JZ,
+	JC,
 
 	invalid
 };

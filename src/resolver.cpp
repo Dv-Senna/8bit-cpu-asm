@@ -155,7 +155,7 @@ std::vector<Instruction> resolve(const std::vector<Instruction> &parsedInstructi
 					{ArgsType::registerID, RegisterID::L},
 					{ArgsType::registerID, RegisterID::E}
 				}},
-				{InstructionName::JMPR, {}}
+				{InstructionName::JHL, {}}
 			};
 		}},
 		{InstructionName::ADD,  [](const std::vector<Args> &args) -> std::vector<Instruction> {return {
@@ -233,7 +233,87 @@ std::vector<Instruction> resolve(const std::vector<Instruction> &parsedInstructi
 				{ArgsType::registerID, args[0].value},
 				{ArgsType::registerID, args[0].value}
 			}}};
-		}}
+		}},
+		{InstructionName::JMP,  [](const std::vector<Args> &args) -> std::vector<Instruction> {
+			uint16_t address {static_cast<uint16_t> (std::get<int> (args[0].value))};
+			int high = bigEndianness ? ((uint8_t*)(&address))[0] : ((uint8_t*)(&address))[1];
+			int low  = bigEndianness ? ((uint8_t*)(&address))[1] : ((uint8_t*)(&address))[0];
+			return {
+				{InstructionName::LDX, {
+					{ArgsType::registerID, RegisterID::H}
+				}},
+				{InstructionName::BYTE, {
+					{ArgsType::number, high}
+				}},
+				{InstructionName::LDX, {
+					{ArgsType::registerID, RegisterID::L}
+				}},
+				{InstructionName::BYTE, {
+					{ArgsType::number, low}
+				}},
+				{InstructionName::JHL, {}}};
+		}},
+		{InstructionName::JI,  [](const std::vector<Args> &args) -> std::vector<Instruction> {
+			uint16_t address {static_cast<uint16_t> (std::get<int> (args[1].value))};
+			int high = bigEndianness ? ((uint8_t*)(&address))[0] : ((uint8_t*)(&address))[1];
+			int low  = bigEndianness ? ((uint8_t*)(&address))[1] : ((uint8_t*)(&address))[0];
+			return {
+				{InstructionName::LDX, {
+					{ArgsType::registerID, RegisterID::H}
+				}},
+				{InstructionName::BYTE, {
+					{ArgsType::number, high}
+				}},
+				{InstructionName::LDX, {
+					{ArgsType::registerID, RegisterID::L}
+				}},
+				{InstructionName::BYTE, {
+					{ArgsType::number, low}
+				}},
+				{InstructionName::JIHL, {
+					{ArgsType::registerID, args[0].value}
+				}}};
+		}},
+		{InstructionName::JZ,  [](const std::vector<Args> &args) -> std::vector<Instruction> {
+			uint16_t address {static_cast<uint16_t> (std::get<int> (args[1].value))};
+			int high = bigEndianness ? ((uint8_t*)(&address))[0] : ((uint8_t*)(&address))[1];
+			int low  = bigEndianness ? ((uint8_t*)(&address))[1] : ((uint8_t*)(&address))[0];
+			return {
+				{InstructionName::LDX, {
+					{ArgsType::registerID, RegisterID::H}
+				}},
+				{InstructionName::BYTE, {
+					{ArgsType::number, high}
+				}},
+				{InstructionName::LDX, {
+					{ArgsType::registerID, RegisterID::L}
+				}},
+				{InstructionName::BYTE, {
+					{ArgsType::number, low}
+				}},
+				{InstructionName::JZHL, {
+					{ArgsType::registerID, args[0].value}
+				}}};
+		}},
+		{InstructionName::JC,  [](const std::vector<Args> &args) -> std::vector<Instruction> {
+			uint16_t address {static_cast<uint16_t> (std::get<int> (args[0].value))};
+			int high = bigEndianness ? ((uint8_t*)(&address))[0] : ((uint8_t*)(&address))[1];
+			int low  = bigEndianness ? ((uint8_t*)(&address))[1] : ((uint8_t*)(&address))[0];
+			return {
+				{InstructionName::LDX, {
+					{ArgsType::registerID, RegisterID::H}
+				}},
+				{InstructionName::BYTE, {
+					{ArgsType::number, high}
+				}},
+				{InstructionName::LDX, {
+					{ArgsType::registerID, RegisterID::L}
+				}},
+				{InstructionName::BYTE, {
+					{ArgsType::number, low}
+				}},
+				{InstructionName::JC, {}}};
+		}},
 	};
 	static std::ofstream output {"out.log"};
 

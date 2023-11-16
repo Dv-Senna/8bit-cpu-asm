@@ -26,14 +26,13 @@ std::map<InstructionName, std::vector<ArgsType>> instructionFormats {
 	{InstructionName::CARRY,  {ArgsType::registerID}},
 	{InstructionName::WI,     {ArgsType::registerID, ArgsType::registerID}},
 	{InstructionName::COPY,   {ArgsType::registerID, ArgsType::registerID}},
-	{InstructionName::JMP,    {ArgsType::tagAddress}},
-	{InstructionName::JMPI,   {ArgsType::registerID, ArgsType::tagAddress}},
-	{InstructionName::JMPZ,   {ArgsType::registerID, ArgsType::tagAddress}},
-	{InstructionName::JMPC,   {ArgsType::tagAddress}},
+	{InstructionName::JHL,    {}},
+	{InstructionName::JIHL,   {ArgsType::registerID}},
+	{InstructionName::JZHL,   {ArgsType::registerID}},
+	{InstructionName::JCHL,   {}},
 	{InstructionName::MWRITE, {ArgsType::registerID}},
 	{InstructionName::MREAD,  {ArgsType::registerID}},
 	{InstructionName::BYTE,   {ArgsType::number}},
-	{InstructionName::JMPR,   {}},
 	{InstructionName::MOV,    {ArgsType::registerID, ArgsType::number}},
 	{InstructionName::PUSH,   {ArgsType::registerID}},
 	{InstructionName::POP,    {}},
@@ -50,6 +49,10 @@ std::map<InstructionName, std::vector<ArgsType>> instructionFormats {
 	{InstructionName::OR,     {ArgsType::registerID, ArgsType::registerID}},
 	{InstructionName::XOR,    {ArgsType::registerID, ArgsType::registerID}},
 	{InstructionName::NOT,    {ArgsType::registerID}},
+	{InstructionName::JMP,    {ArgsType::tagAddress}},
+	{InstructionName::JI,     {ArgsType::registerID, ArgsType::tagAddress}},
+	{InstructionName::JZ,     {ArgsType::registerID, ArgsType::tagAddress}},
+	{InstructionName::JC,     {ArgsType::tagAddress}}
 };
 
 
@@ -150,7 +153,7 @@ std::vector<Args> interpretStringArgs(const std::vector<std::string> &stringArgs
 
 InstructionName getInstructionNameFromString(std::string name)
 {
-	std::map<std::string, InstructionName> instructions {
+	static std::map<std::string, InstructionName> instructions {
 		{"nop", InstructionName::NOP},
 		{"add", InstructionName::ADD},
 		{"sub", InstructionName::SUB},
@@ -168,19 +171,22 @@ InstructionName getInstructionNameFromString(std::string name)
 		{"carry", InstructionName::CARRY},
 		{"wi", InstructionName::WI},
 		{"copy", InstructionName::COPY},
-		{"jmp", InstructionName::JMP},
-		{"jmpi", InstructionName::JMPI},
-		{"jmpz", InstructionName::JMPZ},
-		{"jmpc", InstructionName::JMPC},
+		{"jhl", InstructionName::JHL},
+		{"jihl", InstructionName::JIHL},
+		{"jzhl", InstructionName::JZHL},
+		{"jchl", InstructionName::JCHL},
 		{"mwrite", InstructionName::MWRITE},
 		{"mread", InstructionName::MREAD},
 		{"byte", InstructionName::BYTE},
-		{"jmpr", InstructionName::JMPR},
 		{"mov", InstructionName::MOV},
 		{"push", InstructionName::PUSH},
 		{"pop", InstructionName::POP},
 		{"call", InstructionName::CALL},
-		{"ret", InstructionName::RET}
+		{"ret", InstructionName::RET},
+		{"jmp", InstructionName::JMP},
+		{"ji", InstructionName::JI},
+		{"jz", InstructionName::JZ},
+		{"jc", InstructionName::JC}
 	};
 
 	std::transform(name.begin(), name.end(), name.begin(), [](unsigned char c) {return std::tolower(c);});
@@ -190,6 +196,60 @@ InstructionName getInstructionNameFromString(std::string name)
 		return InstructionName::invalid;
 
 	return it->second;
+}
+
+
+
+int getInstructionSizeFromName(InstructionName name)
+{
+	static std::map<InstructionName, int> sizeMaps {
+		{InstructionName::NOP, 1},
+		{InstructionName::ADDS, 2},
+		{InstructionName::SUBS, 2},
+		{InstructionName::LTEQS, 2},
+		{InstructionName::GTEQS, 2},
+		{InstructionName::LTS, 2},
+		{InstructionName::GTS, 2},
+		{InstructionName::EQS, 2},
+		{InstructionName::ANDS, 2},
+		{InstructionName::ORS, 2},
+		{InstructionName::XORS, 2},
+		{InstructionName::NOTS, 2},
+		{InstructionName::LDX, 1},
+		{InstructionName::RI, 2},
+		{InstructionName::CARRY, 1},
+		{InstructionName::WI, 2},
+		{InstructionName::COPY, 2},
+		{InstructionName::JHL, 1},
+		{InstructionName::JIHL, 1},
+		{InstructionName::JZHL, 1},
+		{InstructionName::JCHL, 1},
+		{InstructionName::MWRITE, 1},
+		{InstructionName::MREAD, 1},
+		{InstructionName::BYTE, 1},
+		{InstructionName::MOV, 2},
+		{InstructionName::PUSH, 9},
+		{InstructionName::POP, 4},
+		{InstructionName::CALL, 25},
+		{InstructionName::RET, 19},
+		{InstructionName::ADD, 2},
+		{InstructionName::SUB, 2},
+		{InstructionName::LTEQ, 2},
+		{InstructionName::GTEQ, 2},
+		{InstructionName::LT, 2},
+		{InstructionName::GT, 2},
+		{InstructionName::EQ, 2},
+		{InstructionName::AND, 2},
+		{InstructionName::OR, 2},
+		{InstructionName::XOR, 2},
+		{InstructionName::NOT, 2},
+		{InstructionName::JMP, 5},
+		{InstructionName::JI, 5},
+		{InstructionName::JZ, 5},
+		{InstructionName::JC, 5},
+	};
+
+	return sizeMaps[name];
 }
 
 
@@ -248,7 +308,7 @@ std::vector<Instruction> parse(std::istream &stream)
 		}
 
 
-		++currentAddress;
+		currentAddress += getInstructionSizeFromName(instructionName);
 
 
 		parsedInstructions.push_back({

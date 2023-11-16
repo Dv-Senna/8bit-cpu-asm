@@ -21,9 +21,9 @@ enum class OpCode
 	WI     = 0b11110000,
 	COPY   = 0b11111000,
 	JMP    = 0b00100000,
-	JMPI   = 0b00101000,
-	JMPZ   = 0b00110000,
-	JMPC   = 0b00111000,
+	JI     = 0b00101000,
+	JZ     = 0b00110000,
+	JC     = 0b00111000,
 	MWRITE = 0b01000000,
 	MREAD  = 0b01001000,
 
