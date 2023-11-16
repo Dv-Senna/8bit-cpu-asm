@@ -45,3 +45,6 @@ Makefile
 
 # log
 *.log
+
+# binary file
+*.bin

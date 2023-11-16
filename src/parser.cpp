@@ -297,7 +297,7 @@ std::vector<Instruction> parse(std::istream &stream)
 							continue;
 						}
 
-						Tag::registerTag(instruction, currentAddress);
+						Tag::registerTag(instruction, currentAddress - 1);
 						continue;
 					}
 				}

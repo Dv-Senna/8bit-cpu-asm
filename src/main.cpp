@@ -25,9 +25,17 @@ int main(int argc, char *argv[])
 			return EXIT_SUCCESS;
 
 		const std::string sourceFilePath {filePaths.first};
-		std::string outputFilePath {sourceFilePath};
-		if (filePaths.second != "")
-			outputFilePath = filePaths.second;
+		std::string outputFilePath {filePaths.second};
+		if (filePaths.second == "")
+		{
+			auto lastPeriod {sourceFilePath.find_last_of('.')};
+			if (lastPeriod != std::string::npos)
+			{
+				outputFilePath.resize(lastPeriod);
+				std::copy(sourceFilePath.begin(), sourceFilePath.begin() + lastPeriod, outputFilePath.begin());
+				outputFilePath += ".bin";
+			}
+		}
 
 		
 		std::ifstream sourceFile {sourceFilePath};
@@ -81,6 +89,17 @@ int main(int argc, char *argv[])
 		}
 
 		std::cout << std::flush;
+
+
+		std::ofstream outputFile {outputFilePath, std::ios::binary};
+
+		for (const auto &instruction : convertedBinary)
+			outputFile << instruction;
+
+		for (size_t i {0}; i < 65536 - convertedBinary.size(); ++i)
+			outputFile << (uint8_t)0;
+
+		outputFile << std::flush;
 	}
 
 	catch (const std::exception &exception)
