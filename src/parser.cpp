@@ -100,7 +100,7 @@ std::string interpretLine(const std::string &givenLine, std::vector<std::string>
 	std::copy(givenLine.begin(), givenLine.begin() + commentPosition, line.begin());
 
 
-	const std::regex regex {R"(\w+)"};
+	const std::regex regex {R"([\w.]+)"};
 	bool first {true};
 	std::smatch matchs {};
 

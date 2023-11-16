@@ -13,13 +13,13 @@ multiply: # 2 paramaters
 	xor a, a
 	mov e, 1
 
-	multiplyLoop:
-		jz c, multiplyEnd
+	multiply.loop:
+		jz c, multiply.end
 		add a, b
 		sub c, e
-		jmp multiplyLoop
+		jmp multiply.loop
 
-	multiplyEnd:
+	multiply.end:
 		ret
 
 
@@ -27,8 +27,8 @@ power: # 2 paramaters
 	push b
 	mov a, 1
 
-	powerLoop:
-		jz c, powerEnd
+	power.loop:
+		jz c, power.end
 		xor h, h
 		copy l, f
 		mov b, 2
@@ -42,9 +42,9 @@ power: # 2 paramaters
 		pop c
 		mov e, 1
 		sub c, e
-		jmp powerLoop
+		jmp power.loop
 
-	powerEnd:
+	power.end:
 		pop b
 		ret
 
