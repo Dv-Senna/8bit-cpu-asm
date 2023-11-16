@@ -13,14 +13,15 @@
 
 
 
-std::pair<std::string, std::string> handleCmdArgs(int argc, char *argv[]);
+std::pair<std::string, std::string> handleCmdArgs(int argc, char *argv[], bool &enableOnlySyntaxeChecker);
 
 
 int main(int argc, char *argv[])
 {
 	try
 	{
-		const auto filePaths {handleCmdArgs(argc, argv)};
+		bool enableOnlySyntaxeChecker {false};
+		const auto filePaths {handleCmdArgs(argc, argv, enableOnlySyntaxeChecker)};
 		if (filePaths.first == "")
 			return EXIT_SUCCESS;
 
@@ -46,49 +47,11 @@ int main(int argc, char *argv[])
 		if (Error::checkErrors())
 			throw std::runtime_error("Error occure during parsing");
 
+		if (enableOnlySyntaxeChecker)
+			return EXIT_SUCCESS;
 
 		auto resolvedInstructions {resolve(parsedInstructions)};
-
-		for (const auto &instruction : resolvedInstructions)
-		{
-			std::cout << "Line " << instruction.line << " > " << static_cast<int> (instruction.name) << " : ";
-			for (const auto &arg : instruction.args)
-			{
-				switch (arg.type)
-				{
-					case ArgsType::number:
-						std::cout << "(number) " << std::get<int> (arg.value) << ", ";
-						break;
-
-					case ArgsType::registerID:
-						std::cout << "(registerID) " << (int)std::get<RegisterID> (arg.value) << ", ";
-						break;
-
-					case ArgsType::tag:
-						std::cout << "(tag) " << std::get<std::string> (arg.value) << ", ";
-						break;
-
-					case ArgsType::tagAddress:
-						std::cout << "(tagAddress) " << std::get<int> (arg.value) << ", ";
-						break;
-				}
-			}
-
-			std::cout << "\n";
-		}
-
-		std::cout << std::flush;
-
-		std::cout << "----------------------------" << std::endl;
-
 		auto convertedBinary {convert(resolvedInstructions)};
-
-		for (const auto instruction : convertedBinary)
-		{
-			std::cout << std::bitset<8> (instruction) << "\n";
-		}
-
-		std::cout << std::flush;
 
 
 		std::ofstream outputFile {outputFilePath, std::ios::binary};
@@ -123,7 +86,7 @@ int main(int argc, char *argv[])
 
 
 
-std::pair<std::string, std::string> handleCmdArgs(int argc, char *argv[])
+std::pair<std::string, std::string> handleCmdArgs(int argc, char *argv[], bool &enableOnlySyntaxeChecker)
 {
 	if (argc <= 1)
 		throw std::runtime_error("Please specify a file to assemble, or use --help");
@@ -142,10 +105,18 @@ std::pair<std::string, std::string> handleCmdArgs(int argc, char *argv[])
 	{
 		if (arg == "--help")
 		{
-			std::cout << "This assembly should be use as follow (order matter !) : assembler [source_file_path] {options}. Here are the supported options :\n";
+			std::cout << "RSASM should be use as follow (order matter !) : assembler [source_file_path] {options}. Here are the supported options :\n";
 			std::cout << "\t-o [file] : set the output file\n";
+			std::cout << "\t-c        : check the syntaxe validity (this will prevent RSASM to generate a binary output, and thus will overwrite -o)\n";
+			std::cout << "\t--version : output the version of RSASM (this will overwrite all other options)\n";
 			std::cout << "\t--help    : print this page (this will overwrite all other options)\n";
 			std::cout << std::flush;
+			return {"", ""};
+		}
+
+		if (arg == "--version")
+		{
+			std::cout << "RSASM (Really Specific Assembly) version 1.0.0" << std::endl;
 			return {"", ""};
 		}
 
@@ -167,6 +138,12 @@ std::pair<std::string, std::string> handleCmdArgs(int argc, char *argv[])
 				files.second = arg;
 
 			continue;
+		}
+
+		if (arg == "-c")
+		{
+			enableOnlySyntaxeChecker = true;
+			return files;
 		}
 
 		if (arg == "-o")
