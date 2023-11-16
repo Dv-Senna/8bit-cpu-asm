@@ -39,18 +39,13 @@ power: # 2 paramaters
 		copy c, a
 		call multiply
 
-		xor h, h
-		copy l, f
-		mov b, 2
-		sub l, b
-		mread c
+		pop c
 		mov e, 1
 		sub c, e
-		pop
 		jmp powerLoop
 
 	powerEnd:
-		pop
+		pop b
 		ret
 
 
@@ -65,12 +60,7 @@ main:
 	mov c, 4
 	call power
 
-	mov h, 0
-	copy l, f
-	mov e, 2
-	sub l, e
-	mread b
-	pop
+	pop b
 	
 
 end:

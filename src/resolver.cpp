@@ -69,6 +69,19 @@ std::vector<Instruction> resolve(const std::vector<Instruction> &parsedInstructi
 					{ArgsType::registerID, RegisterID::F},
 					{ArgsType::registerID, RegisterID::E},
 					{ArgsType::registerID, RegisterID::F}
+				}},
+				{InstructionName::LDX, {
+					{ArgsType::registerID, RegisterID::H}
+				}},
+				{InstructionName::BYTE, {
+					{ArgsType::number, 0}
+				}},
+				{InstructionName::COPY, {
+					{ArgsType::registerID, RegisterID::L},
+					{ArgsType::registerID, RegisterID::F}
+				}},
+				{InstructionName::MREAD, {
+					{ArgsType::registerID, std::get<RegisterID> (args[0].value)}
 				}}
 			};
 		}},
@@ -122,18 +135,7 @@ std::vector<Instruction> resolve(const std::vector<Instruction> &parsedInstructi
 			};
 		}},
 		{InstructionName::RET,  [](const std::vector<Args> &args) -> std::vector<Instruction> {return {
-				{InstructionName::POP, {}},
-				{InstructionName::LDX, {
-					{ArgsType::registerID, RegisterID::H}
-				}},
-				{InstructionName::BYTE, {
-					{ArgsType::number, 0}
-				}},
-				{InstructionName::COPY, {
-					{ArgsType::registerID, RegisterID::L},
-					{ArgsType::registerID, RegisterID::F}
-				}},
-				{InstructionName::MREAD, {
+				{InstructionName::POP, {
 					{ArgsType::registerID, RegisterID::D}
 				}},
 				{InstructionName::LDX, {
