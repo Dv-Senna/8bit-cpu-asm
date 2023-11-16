@@ -36,7 +36,7 @@ std::map<InstructionName, std::vector<ArgsType>> instructionFormats {
 	{InstructionName::MOV,    {ArgsType::registerID, ArgsType::number}},
 	{InstructionName::PUSH,   {ArgsType::registerID}},
 	{InstructionName::POP,    {}},
-	{InstructionName::CALL,   {ArgsType::tagAddress}},
+	{InstructionName::CALL,   {ArgsType::tagAddress, ArgsType::tagAddress}},
 	{InstructionName::RET,    {}},
 	{InstructionName::ADD,    {ArgsType::registerID, ArgsType::registerID}},
 	{InstructionName::SUB,    {ArgsType::registerID, ArgsType::registerID}},
@@ -166,6 +166,17 @@ InstructionName getInstructionNameFromString(std::string name)
 		{"or", InstructionName::OR},
 		{"xor", InstructionName::XOR},
 		{"not", InstructionName::NOT},
+		{"adds", InstructionName::ADDS},
+		{"subs", InstructionName::SUBS},
+		{"lteqs", InstructionName::LTEQS},
+		{"gteqs", InstructionName::GTEQS},
+		{"lts", InstructionName::LTS},
+		{"gts", InstructionName::GTS},
+		{"eqs", InstructionName::EQS},
+		{"ands", InstructionName::ANDS},
+		{"ors", InstructionName::ORS},
+		{"xors", InstructionName::XORS},
+		{"nots", InstructionName::NOTS},
 		{"ldx", InstructionName::LDX},
 		{"ri", InstructionName::RI},
 		{"carry", InstructionName::CARRY},
@@ -310,6 +321,8 @@ std::vector<Instruction> parse(std::istream &stream)
 
 		currentAddress += getInstructionSizeFromName(instructionName);
 
+		if (instructionName == InstructionName::CALL)
+			args.push_back({ArgsType::tagAddress, (int)(currentAddress - 1)});
 
 		parsedInstructions.push_back({
 			instructionName,

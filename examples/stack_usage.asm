@@ -1,0 +1,77 @@
+# the calling convention is as follow :
+#    - paramaters are sended through b, c and d
+#    - f is the stack pointer
+#    - return values are sended through a
+#    - you should not assume that any register are preserved, except for the exceptions cited above
+
+
+jmp main
+
+
+
+multiply: # 2 paramaters
+	xor a, a
+	mov e, 1
+
+	multiplyLoop:
+		jz c, multiplyEnd
+		add a, b
+		sub c, e
+		jmp multiplyLoop
+
+	multiplyEnd:
+		ret
+
+
+power: # 2 paramaters
+	push b
+	mov a, 1
+
+	powerLoop:
+		jz c, powerEnd
+		xor h, h
+		copy l, f
+		mov b, 2
+		sub l, b
+		mread b
+
+		push c
+		copy c, a
+		call multiply
+
+		xor h, h
+		copy l, f
+		mov b, 2
+		sub l, b
+		mread c
+		mov e, 1
+		sub c, e
+		pop
+		jmp powerLoop
+
+	powerEnd:
+		pop
+		ret
+
+
+main:
+	mov b, 6
+	mov c, 5
+	call multiply
+
+	push a
+
+	mov b, 2
+	mov c, 4
+	call power
+
+	mov h, 0
+	copy l, f
+	mov e, 2
+	sub l, e
+	mread b
+	pop
+	
+
+end:
+	nop

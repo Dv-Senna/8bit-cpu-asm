@@ -73,16 +73,19 @@ std::vector<Instruction> resolve(const std::vector<Instruction> &parsedInstructi
 			};
 		}},
 		{InstructionName::CALL, [](const std::vector<Args> &args) -> std::vector<Instruction> {
-			uint8_t high {}, low {};
+			uint8_t high {}, low {}, rethigh {}, retlow {};
 			uint16_t address {static_cast<uint16_t> (std::get<int> (args[0].value))};
+			uint16_t retaddress {static_cast<uint16_t> (std::get<int> (args[1].value))};
 			high = bigEndianness ? ((uint8_t*)(&address))[0] : ((uint8_t*)(&address))[1];
 			low  = bigEndianness ? ((uint8_t*)(&address))[1] : ((uint8_t*)(&address))[0];
+			rethigh = bigEndianness ? ((uint8_t*)(&retaddress))[0] : ((uint8_t*)(&retaddress))[1];
+			retlow  = bigEndianness ? ((uint8_t*)(&retaddress))[1] : ((uint8_t*)(&retaddress))[0];
 			return {
 				{InstructionName::LDX, {
 					{ArgsType::registerID, RegisterID::A}
 				}},
 				{InstructionName::BYTE, {
-					{ArgsType::number, (int)high}
+					{ArgsType::number, (int)rethigh}
 				}},
 				{InstructionName::PUSH, {
 					{ArgsType::registerID, RegisterID::A}
@@ -91,7 +94,7 @@ std::vector<Instruction> resolve(const std::vector<Instruction> &parsedInstructi
 					{ArgsType::registerID, RegisterID::A}
 				}},
 				{InstructionName::BYTE, {
-					{ArgsType::number, (int)low}
+					{ArgsType::number, (int)retlow}
 				}},
 				{InstructionName::LDX, {
 					{ArgsType::registerID, RegisterID::E}
@@ -130,7 +133,7 @@ std::vector<Instruction> resolve(const std::vector<Instruction> &parsedInstructi
 					{ArgsType::registerID, RegisterID::L},
 					{ArgsType::registerID, RegisterID::F}
 				}},
-				{InstructionName::MWRITE, {
+				{InstructionName::MREAD, {
 					{ArgsType::registerID, RegisterID::D}
 				}},
 				{InstructionName::LDX, {
@@ -144,7 +147,7 @@ std::vector<Instruction> resolve(const std::vector<Instruction> &parsedInstructi
 					{ArgsType::registerID, RegisterID::E},
 					{ArgsType::registerID, RegisterID::L}
 				}},
-				{InstructionName::MWRITE, {
+				{InstructionName::MREAD, {
 					{ArgsType::registerID, RegisterID::E}
 				}},
 				{InstructionName::COPY, {
