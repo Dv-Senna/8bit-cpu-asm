@@ -86,11 +86,9 @@ std::vector<Instruction> resolve(const std::vector<Instruction> &parsedInstructi
 			};
 		}},
 		{InstructionName::CALL, [](const std::vector<Args> &args) -> std::vector<Instruction> {
-			uint8_t high {}, low {}, rethigh {}, retlow {};
+			uint8_t rethigh {}, retlow {};
 			uint16_t address {static_cast<uint16_t> (std::get<int> (args[0].value))};
 			uint16_t retaddress {static_cast<uint16_t> (std::get<int> (args[1].value))};
-			high = bigEndianness ? ((uint8_t*)(&address))[0] : ((uint8_t*)(&address))[1];
-			low  = bigEndianness ? ((uint8_t*)(&address))[1] : ((uint8_t*)(&address))[0];
 			rethigh = bigEndianness ? ((uint8_t*)(&retaddress))[0] : ((uint8_t*)(&retaddress))[1];
 			retlow  = bigEndianness ? ((uint8_t*)(&retaddress))[1] : ((uint8_t*)(&retaddress))[0];
 			return {
@@ -122,12 +120,6 @@ std::vector<Instruction> resolve(const std::vector<Instruction> &parsedInstructi
 				}},
 				{InstructionName::MWRITE, {
 					{ArgsType::registerID, RegisterID::A}
-				}},
-				{InstructionName::LDX, {
-					{ArgsType::registerID, RegisterID::H}
-				}},
-				{InstructionName::BYTE, {
-					{ArgsType::number, (int)high}
 				}},
 				{InstructionName::JMP, {
 					{ArgsType::tagAddress, args[0].value}

@@ -241,7 +241,7 @@ int getInstructionSizeFromName(InstructionName name)
 		{InstructionName::MOV, 2},
 		{InstructionName::PUSH, 9},
 		{InstructionName::POP, 9},
-		{InstructionName::CALL, 25},
+		{InstructionName::CALL, 23},
 		{InstructionName::RET, 19},
 		{InstructionName::ADD, 2},
 		{InstructionName::SUB, 2},
