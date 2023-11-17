@@ -48,3 +48,6 @@ Makefile
 
 # binary file
 *.bin
+
+# Compiled assembler directory
+/bin
