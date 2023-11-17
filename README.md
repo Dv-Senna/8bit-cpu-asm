@@ -8,16 +8,16 @@
 	<img src="https://img.shields.io/badge/Tests-passed-success" />
 </p>
 
-An open-source assembler for a really specific custom 8-bits cpu.
+An open-source assembler for a really specific custom 8-bit cpu.
 
 
 # Installation
  - Build the project using [premake](https://premake.github.io/docs/Using-Premake)
- - Install `bin/release/assembler(.exe)` in your path or where you want
+ - Install `bin/release/assembler(.exe)` in your path or wherever you want
  - Happy coding !
 
 # CLI
-The CLI can be use with one of this two ways :
+The CLI can be used with one of this two ways :
 	- `assembler (informational_flags)`
 	- `assembler source_file_path (flags)`
 
@@ -25,14 +25,13 @@ For the second variant, you **must** place the source_file_path first.
 
 
 # CPU architecture
-The CPU is composed of 5 8-bits general purpose registers (`a` - `f`), an `hl` 16-bits register (`h` is the high part, `l` the low part) that is used to point to the 64kib RAM.
+The CPU is composed of 6 8-bits general purpose registers (`a` - `f`), an `hl` 16-bits register (`h` is the high part, `l` the low part) that is used to point to the 64kib RAM.
 
 The stack proposed by RSASM is purely virtual. Thus, a choice had to be made concerning the stack pointer. The register `f` is choosen to be the stack pointer. Any stack-related operation will modify `e`. `CALL` will modify `a` too and `RET` `d`.
 
 Function's paramaters are passed, in order, to `b`, `c` and `d`. If more paramaters are necessary, they are passed by the stack with the fourth paramater first pushed and the last paramater lastly pushed (on top of the stack). The return value of functions (if any) is passed through `a`.
 
 Functions can and will modify registers. It is the responsability of the caller to save register's state to the RAM or stack (if needed) before calling a function.
-
 
 
 # Assembly language

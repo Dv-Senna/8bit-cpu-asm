@@ -1,7 +1,7 @@
 # the calling convention is as follow :
-#    - paramaters are sended through b, c and d
+#    - paramaters are sent through b, c and d
 #    - f is the stack pointer
-#    - return values are sended through a
+#    - return values are sent through a
 #    - you should not assume that any register are preserved, except for the exceptions cited above
 
 
