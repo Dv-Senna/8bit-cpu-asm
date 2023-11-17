@@ -87,7 +87,6 @@ std::vector<Instruction> resolve(const std::vector<Instruction> &parsedInstructi
 		}},
 		{InstructionName::CALL, [](const std::vector<Args> &args) -> std::vector<Instruction> {
 			uint8_t rethigh {}, retlow {};
-			uint16_t address {static_cast<uint16_t> (std::get<int> (args[0].value))};
 			uint16_t retaddress {static_cast<uint16_t> (std::get<int> (args[1].value))};
 			rethigh = bigEndianness ? ((uint8_t*)(&retaddress))[0] : ((uint8_t*)(&retaddress))[1];
 			retlow  = bigEndianness ? ((uint8_t*)(&retaddress))[1] : ((uint8_t*)(&retaddress))[0];
